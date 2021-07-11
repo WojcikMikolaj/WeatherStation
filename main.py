@@ -61,7 +61,8 @@ def get_apikey():
 
 if __name__ == '__main__':
     logging.basicConfig(filename='./logs/'+ datetime.date.today().strftime('%m-%d-%y') + '.log',
-                        filemode='a+', format='%(asctime)s %(levelname)s %(message)s')
+                        filemode='a+', format='%(asctime)s %(levelname)s %(message)s',
+                        level=logging.DEBUG)
     logger = logging.getLogger('MainLogger')
 
     parser = argparse.ArgumentParser('Simple weather clock using OpenWeather\'s API')
