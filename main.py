@@ -59,11 +59,26 @@ def get_apikey():
         return apikey
 
 
+def send_request(location, apikey):
+    posturl = 'https://api.openweathermap.org/data/2.5/weather?lat=' + str(location.latitude) + '&lon=' \
+              + str(location.longitude) + '&appid=' + apikey
+    r = requests.post(posturl)
+    logger.info('Post request:')
+    logger.info('START')
+    logger.info('URL')
+    logger.info(posturl)
+    logger.info('RESPONSE')
+    logger.info(r.text)
+    logger.info('END')
+
+
 if __name__ == '__main__':
     logging.basicConfig(filename='./logs/'+ datetime.date.today().strftime('%m-%d-%y') + '.log',
                         filemode='a+', format='%(asctime)s %(levelname)s %(message)s',
                         level=logging.DEBUG)
     logger = logging.getLogger('MainLogger')
+
+    logger.info('Starting app')
 
     parser = argparse.ArgumentParser('Simple weather clock using OpenWeather\'s API')
     parser.add_argument('-l', '--location', type=type.__str__, default='',
@@ -78,3 +93,5 @@ if __name__ == '__main__':
 
     apikey = get_apikey()
     logger.debug('API key: %s', apikey)
+
+    send_request(location, apikey)
