@@ -2,6 +2,7 @@ import ctypes
 import datetime
 import json
 import string
+import threading
 import requests
 import argparse
 import time
@@ -59,6 +60,16 @@ def get_apikey():
         return apikey
 
 
+def update_data(location, apikey):
+    while 1:
+        response_text = send_request(location, apikey)
+        json_data = json.loads(response_text)
+        for weather in json_data['weather']:
+            logger.info(weather['description'])
+        logger.debug('thread: ' + threading.current_thread().name + ' waiting 10 m for update')
+        time.sleep(600)
+
+
 def send_request(location, apikey):
     posturl = 'https://api.openweathermap.org/data/2.5/weather?lat=' + str(location.latitude) + '&lon=' \
               + str(location.longitude) + '&appid=' + apikey
@@ -70,10 +81,11 @@ def send_request(location, apikey):
     logger.info('RESPONSE')
     logger.info(r.text)
     logger.info('END')
+    return r.text
 
 
 if __name__ == '__main__':
-    logging.basicConfig(filename='./logs/'+ datetime.date.today().strftime('%m-%d-%y') + '.log',
+    logging.basicConfig(filename='./logs/' + datetime.date.today().strftime('%d-%m-%y') + '.log',
                         filemode='a+', format='%(asctime)s %(levelname)s %(message)s',
                         level=logging.DEBUG)
     logger = logging.getLogger('MainLogger')
@@ -94,4 +106,10 @@ if __name__ == '__main__':
     apikey = get_apikey()
     logger.debug('API key: %s', apikey)
 
-    send_request(location, apikey)
+    #send_request(location, apikey)
+
+    update_thread = threading.Thread(name='date_updater', target=update_data, args=(location, apikey,))
+    update_thread.start()
+
+    while 1:
+        pass
