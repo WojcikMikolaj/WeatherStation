@@ -31,6 +31,11 @@ class Location:
         logger.info('   longitude: %f', self.longitude)
 
 
+class WeatherData:
+    temperature = 0.0
+    conditions = list()
+
+
 def get_location(location_name):
     file = open(config_path + config_locations, 'r')
     location = Location()
@@ -60,14 +65,28 @@ def get_apikey():
         return apikey
 
 
-def update_data(location, apikey):
+def update_data(location, apikey, mutex:threading.Lock, data:WeatherData):
     while 1:
         response_text = send_request(location, apikey)
         json_data = json.loads(response_text)
+        conditions = list()
+
         for weather in json_data['weather']:
-            logger.info(weather['description'])
-        logger.info('temperature: ' + str(float(json_data['main']['temp'])-273.0)[0:5])
+            cond = weather['description']
+            conditions.append(cond)
+            logger.info(cond)
+        temperature = float(json_data['main']['temp'])-273.0
+
+        logger.info('temperature: ' + str(temperature)[0:5])
+        logger.debug('copying data protected by mutex')
+
+        mutex.acquire(True, -1)
+        data.conditions = conditions.copy()
+        data.temperature = temperature
+        mutex.release()
+
         logger.debug('thread: ' + threading.current_thread().name + ' waiting 10 m for update')
+
         time.sleep(600)
 
 
@@ -109,7 +128,10 @@ if __name__ == '__main__':
 
     #send_request(location, apikey)
 
-    update_thread = threading.Thread(name='date_updater', target=update_data, args=(location, apikey,))
+    mutex = threading.Lock()
+    data = WeatherData()
+
+    update_thread = threading.Thread(name='date_updater', target=update_data, args=(location, apikey, mutex, data,))
     update_thread.start()
 
     while 1:
