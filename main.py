@@ -66,6 +66,7 @@ def update_data(location, apikey):
         json_data = json.loads(response_text)
         for weather in json_data['weather']:
             logger.info(weather['description'])
+        logger.info('temperature: ' + str(float(json_data['main']['temp'])-273.0)[0:5])
         logger.debug('thread: ' + threading.current_thread().name + ' waiting 10 m for update')
         time.sleep(600)
 
