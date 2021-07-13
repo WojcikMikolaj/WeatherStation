@@ -4,6 +4,8 @@ import json
 import socket
 import string
 import threading
+from typing import Any
+
 import requests
 import argparse
 import time
@@ -13,6 +15,14 @@ import logging
 config_path = './config'
 config_locations = '/locations'
 config_apikey = '/apikey'
+
+
+class ComplexEncoder(json.JSONEncoder):
+    def default(self, o: Any) -> Any:
+        if hasattr(o, 'makeJSON'):
+            return o.makeJSON()
+        else:
+            return json.JSONEncoder.default(self, o)
 
 
 class Location:
@@ -32,8 +42,33 @@ class Location:
         logger.info('   longitude: %f', self.longitude)
 
 
-class WeatherData:
+class Jsonable:
+    def makeJSON(self):
+        return self.__dict__
+
+
+class Wind(Jsonable):
+    speed = 0.0
+    deg = 0
+
+
+class Rain(Jsonable):
+    last_hour_forecast = 0.0
+
+
+class Clouds(Jsonable):
+    cloudiness = 0
+
+
+class WeatherData(Jsonable):
     temperature = 0.0
+    feels_like = 0.0
+    pressure = 0
+    humidity = 0
+    visibility = 0
+    wind = Wind()
+    rain = Rain()
+    clouds = Clouds()
     conditions = list()
 
 
@@ -84,6 +119,17 @@ def update_data(location, apikey, mutex: threading.Lock, data: WeatherData):
             conditions.append(cond)
             logger.info(cond)
         temperature = float(json_data['main']['temp'])-273.0
+        feels_like = float(json_data['main']['feels_like'])-273.0
+        pressure = int(json_data['main']['pressure'])
+        humidity = int(json_data['main']['humidity'])
+        visibility = int(json_data['visibility'])
+        wind = Wind()
+        wind.deg = int(json_data['wind']['deg'])
+        wind.speed = float(json_data['wind']['speed'])
+        rain = Rain()
+        rain.last_hour_forecast = float(json_data['rain']['1h'])
+        clouds = Clouds()
+        clouds.cloudiness = int(json_data['clouds']['all'])
 
         logger.info('temperature: ' + str(temperature)[0:5])
         logger.debug('copying data protected by mutex')
@@ -91,6 +137,13 @@ def update_data(location, apikey, mutex: threading.Lock, data: WeatherData):
         mutex.acquire(True, -1)
         data.conditions = conditions.copy()
         data.temperature = temperature
+        data.rain = rain
+        data.clouds = clouds
+        data.humidity = humidity
+        data.wind = wind
+        data.pressure = pressure
+        data.visibility = visibility
+        data.feels_like = feels_like
         mutex.release()
 
         logger.debug('thread: ' + threading.current_thread().name + ' waiting 10 m for update')
@@ -121,7 +174,7 @@ def listen_for_connections(sock: socket.socket, data_mutex: threading.Lock, data
         logger.info('Received message: %s, from: %s', msg, address)
         data_mutex.acquire(True, -1)
         try:
-            msg = str.encode(json.dumps(data.__dict__))
+            msg = str.encode(json.dumps(data, cls=ComplexEncoder))
             sock.sendto(msg, address)
             logger.info('Sent message: %s, to: %s', msg, address)
         except:
