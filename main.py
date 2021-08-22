@@ -160,7 +160,7 @@ def update_data(location, apikey, mutex: threading.Lock, data: WeatherData):
 def send_request(location, apikey):
     posturl = 'https://api.openweathermap.org/data/2.5/weather?lat=' + str(location.latitude) + '&lon=' \
               + str(location.longitude) + '&appid=' + apikey
-    if posturl[-1] == chr(0):
+    if posturl.endswith(chr(0)):
         posturl = posturl[0:-1]
     r = requests.post(posturl)
     logger.info('Post request:')
