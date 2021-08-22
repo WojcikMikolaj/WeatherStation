@@ -6,7 +6,7 @@ COPY config config
 
 COPY main.py main.py
 
-RUN pip install --no-cache-dir requests argparse logging time
+RUN pip install --no-cache-dir requests argparse
 RUN mkdir logs
 
 CMD python3 main.py -l=Warsaw
