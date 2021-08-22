@@ -10,7 +10,7 @@ import requests
 import argparse
 import time
 import logging
-
+from sys import platform
 
 config_path = './config'
 config_locations = '/locations'
@@ -160,7 +160,9 @@ def update_data(location, apikey, mutex: threading.Lock, data: WeatherData):
 def send_request(location, apikey):
     posturl = 'https://api.openweathermap.org/data/2.5/weather?lat=' + str(location.latitude) + '&lon=' \
               + str(location.longitude) + '&appid=' + apikey
-    posturl = posturl[0:-1]
+    #from https://stackoverflow.com/questions/8220108/how-do-i-check-the-operating-system-in-python
+    if platform == "linux" or platform == "linux2":
+        posturl = posturl[0:-1]
     r = requests.post(posturl)
     logger.info('Post request:')
     logger.info('START')
