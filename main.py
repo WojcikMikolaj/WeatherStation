@@ -123,13 +123,19 @@ def update_data(location, apikey, mutex: threading.Lock, data: WeatherData):
         pressure = int(json_data['main']['pressure'])
         humidity = int(json_data['main']['humidity'])
         visibility = int(json_data['visibility'])
+
         wind = Wind()
-        wind.deg = int(json_data['wind']['deg'])
-        wind.speed = float(json_data['wind']['speed'])
+        if 'wind' in json_data:
+            wind.deg = int(json_data['wind']['deg'])
+            wind.speed = float(json_data['wind']['speed'])
+
         rain = Rain()
-        rain.last_hour_forecast = float(json_data['rain']['1h'])
+        if 'rain' in json_data:
+            rain.last_hour_forecast = float(json_data['rain']['1h'])
+
         clouds = Clouds()
-        clouds.cloudiness = int(json_data['clouds']['all'])
+        if 'clouds' in json_data:
+            clouds.cloudiness = int(json_data['clouds']['all'])
 
         logger.info('temperature: ' + str(temperature)[0:5])
         logger.debug('copying data protected by mutex')
