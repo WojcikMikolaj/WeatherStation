@@ -10,6 +10,6 @@ EXPOSE 4000/udp
 
 RUN pip install --no-cache-dir requests argparse
 
-VOLUME ["/logs"]
+VOLUME ["/usr/src/WeatherStation/logs"]
 
 CMD python3 main.py -l=Warsaw
