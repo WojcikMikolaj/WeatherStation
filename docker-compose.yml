@@ -1,0 +1,7 @@
+services:
+  weather_station_service:
+    ports:
+      - "4000:4000"
+    volumes:
+      - /opt/logs:/logs
+    image: weather_station:latest
