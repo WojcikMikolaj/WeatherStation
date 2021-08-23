@@ -9,7 +9,6 @@ COPY *.py ./
 EXPOSE 4000/udp
 
 RUN pip install --no-cache-dir requests argparse
-RUN mkdir logs
 
 VOLUME ./logs
 
