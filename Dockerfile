@@ -4,7 +4,7 @@ WORKDIR /usr/src/WeatherStation
 
 COPY config config
 
-COPY main.py main.py
+COPY *.py .
 
 EXPOSE 4000/udp
 
