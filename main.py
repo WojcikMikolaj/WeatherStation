@@ -14,6 +14,7 @@ import logging
 from sys import platform
 
 import config_loader
+import webserver
 from connection_handler import listen_for_connections
 from data_updater import update_data
 from server_data import ServerData
@@ -58,6 +59,9 @@ if __name__ == '__main__':
     listener_thread = threading.Thread(name='connection_listener', target=listen_for_connections,
                                        args=(sock, mutex, data,))
     listener_thread.start()
+
+    webserver_thread = threading.Thread(name='web_thread', target=webserver.start_webserver, args=(location_name, mutex, data,))
+    webserver_thread.start()
 
     while 1:
         pass

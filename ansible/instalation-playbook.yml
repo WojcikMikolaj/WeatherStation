@@ -1,0 +1,10 @@
+---
+- name: Clone repo
+  hosts: all
+  tasks:
+    - name: Git clone
+      become: yes
+      ansible.builtin.git:
+        repo: 'https://github.com/WojcikMikolaj/WeatherStation'
+        dest: /opt/Weather
+        clone: yes
