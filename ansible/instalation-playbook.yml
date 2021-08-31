@@ -1,4 +1,13 @@
 ---
+- name: Upgrade packages
+  hosts: all
+  tasks:
+    - name: Apt update & upgrade
+      become: yes
+      apt:
+        name: '*'
+        state: latest
+        update_cache: yes
 - name: Clone repo
   hosts: all
   tasks:
