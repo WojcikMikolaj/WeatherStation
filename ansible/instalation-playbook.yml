@@ -8,6 +8,43 @@
         name: '*'
         state: latest
         update_cache: yes
+- name: Install docker
+  hosts: all
+  tasks:
+    - name: Install docker dependencies
+      become: yes
+      apt:
+        pkg:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - gnupg
+          - lsb-release
+    - name: Add docker gpg key to apt
+      become: yes
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+    - name: Add docker repo to apt
+      become: yes
+      apt_repository:
+        #arch={{ansible_architecture}} rpi thinks that it's aarch64
+        repo: deb [arch=arm64] https://download.docker.com/linux/ubuntu {{ansible_distribution_release}} stable
+    - name: Update apt repos
+      become: yes
+      apt:
+        update_cache: yes
+    - name: Install docker
+      become: yes
+      apt:
+        pkg:
+        - docker-ce
+        - docker-ce-cli
+        - containerd.io
+        - python3-pip
+    - name: Install docker compose
+      become: yes
+      pip:
+        name: docker-compose
 - name: Clone repo
   hosts: all
   tasks:
