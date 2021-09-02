@@ -10,7 +10,7 @@ EXPOSE 4000/udp
 EXPOSE 4001/udp
 EXPOSE 4001/tcp
 
-RUN pip install --no-cache-dir requests argparse
+RUN pip install --no-cache-dir requests argparse tornado
 
 VOLUME ["/usr/src/WeatherStation/logs"]
 
