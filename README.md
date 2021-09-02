@@ -6,4 +6,4 @@ Server ask API for new forecast/current weather every 10 minutes and shares it i
 
 Project also includes Dockerfile, docker-compose.yml and Ansible playbook files to make installation and usage easier.
 
-All playbooks use 'become: yes' to run docker commands.
+All playbooks use `become: yes` to run docker commands.
