@@ -1,0 +1,18 @@
+---
+- name: Get latest version of the app
+  hosts: all
+  tasks:
+    - name: git pull
+      become: yes
+      git:
+        repo: 'https://github.com/WojcikMikolaj/WeatherStation'
+        dest: /opt/Weather
+        update: yes
+- name: Build docker container
+  hosts: all
+  tasks:
+    - name: Docker build
+      become: yes
+      shell: docker build -t weather_station:latest .
+      args:
+        chdir: /opt/Weather

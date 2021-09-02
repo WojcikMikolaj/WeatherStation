@@ -7,6 +7,8 @@ COPY config config
 COPY *.py ./
 
 EXPOSE 4000/udp
+EXPOSE 4001/udp
+EXPOSE 4001/tcp
 
 RUN pip install --no-cache-dir requests argparse
 

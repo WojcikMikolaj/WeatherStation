@@ -1,0 +1,8 @@
+---
+- name: Run app using docker-compose
+  hosts: all
+  tasks:
+    - name: Start containers
+      shell: docker-compose up -d
+      args:
+        chdir: /opt/Weather

@@ -3,6 +3,7 @@ services:
   weather_station_service:
     ports:
       - "4000:4000/udp"
+      - "4001:4001"
     volumes:
       - /opt/logs:/usr/src/WeatherStation/logs
     image: weather_station:latest
