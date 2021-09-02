@@ -1,0 +1,9 @@
+---
+- name: Copy config from manager to hosts
+  hosts: all
+  tasks:
+    - name: Copy apikey
+      become: yes
+      copy:
+        src: weather_app/config/apikey
+        dest: /opt/Weather/config/apikey
