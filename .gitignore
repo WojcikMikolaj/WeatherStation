@@ -1,2 +1,3 @@
 /config/apikey
 /logs/*
+!/logs/.keep
